@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bride & Groom Compatibility Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f1f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #d81b60;
+            margin-bottom: 30px;
+        }
+        .test-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .question {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .question h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .options-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .person-options {
+            width: 48%;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .person-options h4 {
+            margin-top: 0;
+            color: #d81b60;
+            text-align: center;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .option {
+            margin: 10px 0;
+        }
+        .option label {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .results-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+        button {
+            background-color: #d81b60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ad1457;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            display: none;
+        }
+        .progress-bar {
+            height: 30px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #ff6b6b, #d81b60);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease-in-out;
+        }
+        .match-details {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .match-category {
+            width: 48%;
+            margin-bottom: 15px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .match-answers {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .match-item {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .match {
+            background-color: #e8f5e9;
+        }
+        .mismatch {
+            background-color: #ffebee;
+        }
+        @media (max-width: 768px) {
+            .options-container {
+                flex-direction: column;
+            }
+            .person-options {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            .match-category {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bride & Groom Compatibility Test</h1>
+        
+        <div class="test-area" id="questionsContainer">
+            <!-- Questions will be dynamically added here -->
+        </div>
+        
+        <div class="results-section">
+            <button id="calculateBtn">Calculate Compatibility</button>
+            
+            <div class="results" id="resultsSection">
+                <h2>Your Compatibility Results</h2>
+                <div class="progress-bar">
+                    <div class="progress" id="compatibilityScore">0%</div>
+                </div>
+                
+                <div id="compatibilityMessage"></div>
+                
+                <div class="match-details">
+                    <div class="match-category">
+                        <h3>Perfect Matches</h3>
+                        <div id="perfectMatches"></div>
+                    </div>
+                    <div class="match-category">
+                        <h3>Areas to Discuss</h3>
+                        <div id="mismatches"></div>
+                    </div>
+                </div>
+                
+                <div class="match-answers">
+                    <h3>All Answers</h3>
+                    <div id="allAnswers"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions data based on your selection
+        const questions = [
+            {
+                id: 1,
+                text: "Morning person or night owl?",
+                options: ["Morning person", "Night owl"]
+            },
+            {
+                id: 2,
+                text: "Tea or coffee?",
+                options: ["Tea", "Coffee"]
+            },
+            {
+                id: 4,
+                text: "Spicy food or mild food?",
+                options: ["Spicy food", "Mild food"]
+            },
+            {
+                id: 5,
+                text: "Cats or dogs?",
+                options: ["Cats", "Dogs"]
+            },
+            {
+                id: 6,
+                text: "Mountains or beaches?",
+                options: ["Mountains", "Beaches"]
+            },
+            {
+                id: 7,
+                text: "Bollywood or regional cinema?",
+                options: ["Bollywood", "Regional cinema"]
+            },
+            {
+                id: 8,
+                text: "Cooking or ordering in?",
+                options: ["Cooking", "Ordering in"]
+            },
+            {
+                id: 10,
+                text: "City life or suburban life?",
+                options: ["City life", "Suburban life"]
+            },
+            {
+                id: 11,
+                text: "Early dinner or late dinner?",
+                options: ["Early dinner", "Late dinner"]
+            },
+            {
+                id: 12,
+                text: "Netflix or reading books?",
+                options: ["Netflix", "Reading books"]
+            },
+            {
+                id: 13,
+                text: "Shopping online or in-store?",
+                options: ["Shopping online", "Shopping in-store"]
+            },
+            {
+                id: 14,
+                text: "Traditional clothing or western wear?",
+                options: ["Traditional clothing", "Western wear"]
+            },
+            {
+                id: 15,
+                text: "Yoga or gym?",
+                options: ["Yoga", "Gym"]
+            },
+            {
+                id: 16,
+                text: "Home-cooked food or restaurant meals?",
+                options: ["Home-cooked food", "Restaurant meals"]
+            },
+            {
+                id: 17,
+                text: "Planned vacation or spontaneous trips?",
+                options: ["Planned vacation", "Spontaneous trips"]
+            },
+            {
+                id: 18,
+                text: "Air conditioning or natural ventilation?",
+                options: ["Air conditioning", "Natural ventilation"]
+            },
+            {
+                id: 19,
+                text: "Social gatherings or intimate meetups?",
+                options: ["Social gatherings", "Intimate meetups"]
+            },
+            {
+                id: 54,
+                text: "Weekly date nights or quality time daily?",
+                options: ["Weekly date nights", "Quality time daily"]
+            },
+            {
+                id: 71,
+                text: "Regular shopping or only when needed?",
+                options: ["Regular shopping", "Only when needed"]
+            },
+            {
+                id: 81,
+                text: "Social media: active user or minimal presence?",
+                options: ["Active user", "Minimal presence"]
+            },
+            {
+                id: 83,
+                text: "Sleeping with AC or without AC?",
+                options: ["With AC", "Without AC"]
+            },
+            {
+                id: 84,
+                text: "Weekends: socializing or relaxing at home?",
+                options: ["Socializing", "Relaxing at home"]
+            },
+            {
+                id: 85,
+                text: "Keeping track of birthdays/anniversaries or forgetting dates?",
+                options: ["Keeping track", "Often forgetting"]
+            },
+            {
+                id: 89,
+                text: "Watching cricket or not interested?",
+                options: ["Watching cricket", "Not interested"]
+            }
+        ];
+
+        // Generate the questions
+        const questionsContainer = document.getElementById('questionsContainer');
+        
+        questions.forEach((question, index) => {
+            const questionElement = document.createElement('div');
+            questionElement.className = 'question';
+            questionElement.innerHTML = `
+                <h3>Question ${index + 1}: ${question.text}</h3>
+                <div class="options-container">
+                    <div class="person-options">
+                        <h4>Bride's Choice</h4>
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="bride-q${question.id}-o${i}" name="bride-q${question.id}" value="${option}" required>
+                                <label for="bride-q${question.id}-o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="person-options">
+                        <h4>Groom's Choice</h4>
+                        ${question.options.map((option, i) => `
+                            <div class="option">
+                                <input type="radio" id="groom-q${question.id}-o${i}" name="groom-q${question.id}" value="${option}" required>
+                                <label for="groom-q${question.id}-o${i}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            questionsContainer.appendChild(questionElement);
+        });
+
+        // Calculate compatibility
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            let matches = 0;
+            let totalQuestions = questions.length;
+            let answeredQuestions = 0;
+            let matchDetails = [];
+            let mismatchDetails = [];
+            let allAnswers = [];
+            
+            questions.forEach(question => {
+                const brideSelection = document.querySelector(`input[name="bride-q${question.id}"]:checked`);
+                const groomSelection = document.querySelector(`input[name="groom-q${question.id}"]:checked`);
+                
+                if (brideSelection && groomSelection) {
+                    answeredQuestions++;
+                    const brideAnswer = brideSelection.value;
+                    const groomAnswer = groomSelection.value;
+                    
+                    if (brideAnswer === groomAnswer) {
+                        matches++;
+                        matchDetails.push(`<div class="match-item match">✓ ${question.text} - Both chose: ${brideAnswer}</div>`);
+                    } else {
+                        mismatchDetails.push(`<div class="match-item mismatch">✗ ${question.text} - Bride: ${brideAnswer}, Groom: ${groomAnswer}</div>`);
+                    }
+                    
+                    allAnswers.push(`<div class="match-item ${brideAnswer === groomAnswer ? 'match' : 'mismatch'}">
+                        ${question.text}<br>
+                        Bride: ${brideAnswer} | Groom: ${groomAnswer}
+                    </div>`);
+                }
+            });
+            
+            if (answeredQuestions === 0) {
+                alert("Please answer at least one question!");
+                return;
+            }
+            
+            const compatibilityPercentage = Math.round((matches / answeredQuestions) * 100);
+            
+            // Display results
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('compatibilityScore').style.width = `${compatibilityPercentage}%`;
+            document.getElementById('compatibilityScore').textContent = `${compatibilityPercentage}%`;
+            
+            // Set compatibility message
+            let message = "";
+            if (compatibilityPercentage >= 90) {
+                message = "Perfect match! You're incredibly compatible with each other!";
+            } else if (compatibilityPercentage >= 75) {
+                message = "Great compatibility! You share many preferences and values.";
+            } else if (compatibilityPercentage >= 50) {
+                message = "Good compatibility. You have some differences to discuss, but a solid foundation.";
+            } else if (compatibilityPercentage >= 25) {
+                message = "You have some compatibility, but many areas to discuss and compromise on.";
+            } else {
+                message = "You have quite different preferences. Take time to understand each other better.";
+            }
+            
+            document.getElementById('compatibilityMessage').innerHTML = `<p>${message}</p>`;
+            document.getElementById('perfectMatches').innerHTML = matchDetails.join('') || "<p>No perfect matches yet!</p>";
+            document.getElementById('mismatches').innerHTML = mismatchDetails.join('') || "<p>No mismatches - perfect harmony!</p>";
+            document.getElementById('allAnswers').innerHTML = allAnswers.join('');
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
